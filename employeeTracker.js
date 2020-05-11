@@ -11,8 +11,8 @@ var connection = mysql.createConnection({
   user: "root",
 
   // Your password
-  password: "",
-  database: "top_songsDB"
+  password: "root",
+  database: "employeeProfiles_DB"
 });
 
 connection.connect(function(err) {
@@ -27,11 +27,14 @@ function runSearch() {
       type: "rawlist",
       message: "What would you like to do?",
       choices: [
-        "Find songs by artist",
-        "Find all artists who appear more than once",
-        "Find data within a specific range",
-        "Search for a specific song",
-        "Find artists with a top song and top album in the same year"
+        "View All Employees",
+        "View All Employees By Department",
+        "View All Employees By Manager",
+        "Add Employee",
+        "Remove Employee", 
+        "Update Employee Manager",
+        "Update Employee Role",
+        "View All Roles"
       ]
     })
     .then(function(answer) {
