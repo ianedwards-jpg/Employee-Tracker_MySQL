@@ -27,4 +27,4 @@ CREATE TABLE employeeData (
 );
 
 --SELECT * FROM top5000;
-select * from top_albums;
+select * from employeeProfiles_DB;
