@@ -79,9 +79,10 @@ function runSearch() {
 function employeeView() {
   var query = "SELECT * FROM employeeprofiles_db.employeedata;";
   connection.query(query, function (err, res) {
-    console.table(res);
+    //console.table(res);
+    console.table(res)
   });
- runSearch();
+  runSearch();
 }
 
 //
@@ -90,14 +91,14 @@ function viewEmpbyDept() {
   .prompt([
     {
       type: 'list',
-      name: 'reptile',
-      message: 'Which is better?',
-      choices: ['alligator', 'crocodile'],
+      name: 'selectDepartment',
+      message: 'Select Department',
+      choices: ['Action League Now'],
     },
   ])
     .then(function (answer) {
-      var query = "SELECT position, song, year FROM top5000 WHERE ?";
-      connection.query(query, { artist: answer.artist }, function (err, res) {
+      var query = "SELECT first_name, last_name, role_id FROM employeeProfiles_DB.employeedata WHERE ?";
+      connection.query(query, { dept_id: answer.dept_id }, function (err, res) {
         for (var i = 0; i < res.length; i++) {
           console.log("Position: " + res[i].position + " || Song: " + res[i].song + " || Year: " + res[i].year);
         }
