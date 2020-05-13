@@ -81,7 +81,7 @@ function employeeView() {
   connection.query(query, function (err, res) {
     console.table(res);
   });
- // runSearch();
+ runSearch();
 }
 
 //
