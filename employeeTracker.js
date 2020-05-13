@@ -80,7 +80,7 @@ function employeeView() {
   var query = "SELECT * FROM employeeprofiles_db.employeedata;";
   connection.query(query, function (err, res) {
     //console.table(res);
-    console.table(res)
+    console.table(res);
   });
   runSearch();
 }
