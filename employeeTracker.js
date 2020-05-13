@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var cTable= require("console.table");
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -24,7 +25,7 @@ function runSearch() {
   inquirer
     .prompt({
       name: "action",
-      type: "rawlist",
+      type: "list",
       message: "What would you like to do?",
       choices: [
         "View All Employees",
@@ -44,7 +45,7 @@ function runSearch() {
           break;
 
         case "View All Employees By Department":
-          multiSearch();
+          viewEmpbyDept();
           break;
 
         case "View All Employees By Manager":
@@ -74,22 +75,26 @@ function runSearch() {
     });
 }
 
+//Search All Employees Function 
 function employeeView() {
   var query = "SELECT * FROM employeeprofiles_db.employeedata;";
   connection.query(query, function (err, res) {
-    console.log(res);
+    console.table(res);
   });
-  runSearch();
+ // runSearch();
 }
 
-
-function artistSearch() {
+//
+function viewEmpbyDept() {
   inquirer
-    .prompt({
-      name: "artist",
-      type: "input",
-      message: "What artist would you like to search for?"
-    })
+  .prompt([
+    {
+      type: 'list',
+      name: 'reptile',
+      message: 'Which is better?',
+      choices: ['alligator', 'crocodile'],
+    },
+  ])
     .then(function (answer) {
       var query = "SELECT position, song, year FROM top5000 WHERE ?";
       connection.query(query, { artist: answer.artist }, function (err, res) {
