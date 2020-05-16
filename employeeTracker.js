@@ -9,10 +9,10 @@ var connection = mysql.createConnection({
   port: 3306,
 
   // Your username
-  user: "root",
+  user: "app",
 
   // Your password
-  password: "root",
+  password: "app",
   database: "employeeProfiles_DB"
 });
 
@@ -36,7 +36,7 @@ function runSearch() {
         "Update Employee Manager",
         "Update Employee Role",
         "View All Roles"
-      ]
+      ],
     })
     .then(function (answer) {
       switch (answer.action) {
@@ -80,7 +80,7 @@ function employeeView() {
   var query = "SELECT * FROM employeeprofiles_db.employeedata;";
   connection.query(query, function (err, res) {
     //console.table(res);
-    console.table(res);
+    console.table("\n",res);
   });
   runSearch();
 }
