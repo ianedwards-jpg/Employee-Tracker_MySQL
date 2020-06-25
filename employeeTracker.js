@@ -12,7 +12,7 @@ var connection = mysql.createConnection({
   user: "app",
 
   // Your password
-  password: "app",
+  password: "root",
   database: "employeeProfiles_DB"
 });
 
@@ -53,11 +53,11 @@ function runSearch() {
           break;
 
         case "Add Employee":
-          songSearch();
+          addEmp();
           break;
 
         case "Remove Employee":
-          songAndAlbumSearch();
+         remEmp();
           break;
 
         case "Update Employee Manager":
@@ -77,60 +77,73 @@ function runSearch() {
 
 //Search All Employees Function 
 function employeeView() {
-  var query = "SELECT * FROM employeeprofiles_db.employeedata;";
+  var query = "SELECT * FROM employeeprofiles_db.employeeData;";
   connection.query(query, function (err, res) {
     //console.table(res);
     console.table("\n",res);
+    runSearch();
   });
-  runSearch();
+ 
 }
 
 //
 function viewEmpbyDept() {
-  inquirer
-  .prompt([
-    {
-      type: 'list',
-      name: 'selectDepartment',
-      message: 'Select Department',
-      choices: ['Action League Now'],
-    },
-  ])
-    .then(function (answer) {
-      var query = "SELECT first_name, last_name, role_id FROM employeeProfiles_DB.employeedata WHERE ?";
-      connection.query(query, { dept_id: answer.dept_id }, function (err, res) {
-        for (var i = 0; i < res.length; i++) {
-          console.log("Position: " + res[i].position + " || Song: " + res[i].song + " || Year: " + res[i].year);
-        }
-        runSearch();
+  var deptQuery = "SELECT * FROM employeeprofiles_db.departmentData;";
+  connection.query(deptQuery, function (err, res) {
+    //console.table(res);
+    const choices = res.map(d=> d.dept_Name)
+    inquirer
+    .prompt([
+      {
+        type: 'list',
+        name: 'selectDepartment',
+        message: 'Select Department',
+        choices
+      },
+    ])
+      .then(function (answer) {
+        var query = "SELECT * FROM employeeprofiles_db.employeeData WHERE department_id = ?";
+        connection.query(query, [choices.indexOf(answer.selectDepartment) + 1] , function (err, res) {
+          console.table(res)
+          runSearch();
+        });
       });
-    });
+  });
+ 
 }
 
 function rangeSearch() {
   inquirer
     .prompt([
       {
-        name: "start",
-        type: "input",
-        message: "Enter starting position: ",
-        validate: function (value) {
-          if (isNaN(value) === false) {
-            return true;
-          }
-          return false;
-        }
+        name: 'firstName',
+        type: 'input',
+        message: 'Enter employees first name.',
       },
       {
-        name: "end",
-        type: "input",
-        message: "Enter ending position: ",
-        validate: function (value) {
-          if (isNaN(value) === false) {
-            return true;
-          }
-          return false;
-        }
+        name: 'name',
+        type: 'input',
+        message: 'Enter employees last name.',
+      },
+      {
+        name: 'id',
+        type: 'input',
+        message: 'Enter your Employee ID.',
+      },
+      {
+        name: 'email',
+        type: 'input',
+        message: 'Enter your email.'
+      },
+      {
+        name: "role",
+        type: "rawlist",
+        message: "What is your role within our organization?",
+        choices: [
+          "Intern",
+          "Engineer",
+          "Manager",
+        ]
       }
     ])
     .then(function (answer) {
@@ -153,62 +166,62 @@ function rangeSearch() {
     });
 }
 
-function songSearch() {
-  inquirer
-    .prompt({
-      name: "song",
-      type: "input",
-      message: "What song would you like to look for?"
-    })
-    .then(function (answer) {
-      console.log(answer.song);
-      connection.query("SELECT * FROM top5000 WHERE ?", { song: answer.song }, function (err, res) {
-        console.log(
-          "Position: " +
-          res[0].position +
-          " || Song: " +
-          res[0].song +
-          " || Artist: " +
-          res[0].artist +
-          " || Year: " +
-          res[0].year
-        );
-        runSearch();
-      });
-    });
-}
+// function songSearch() {
+//   inquirer
+//     .prompt({
+//       name: "song",
+//       type: "input",
+//       message: "What song would you like to look for?"
+//     })
+//     .then(function (answer) {
+//       console.log(answer.song);
+//       connection.query("SELECT * FROM top5000 WHERE ?", { song: answer.song }, function (err, res) {
+//         console.log(
+//           "Position: " +
+//           res[0].position +
+//           " || Song: " +
+//           res[0].song +
+//           " || Artist: " +
+//           res[0].artist +
+//           " || Year: " +
+//           res[0].year
+//         );
+//         runSearch();
+//       });
+//     });
+// }
 
-function songAndAlbumSearch() {
-  inquirer
-    .prompt({
-      name: "artist",
-      type: "input",
-      message: "What artist would you like to search for?"
-    })
-    .then(function (answer) {
-      var query = "SELECT top_albums.year, top_albums.album, top_albums.position, top5000.song, top5000.artist ";
-      query += "FROM top_albums INNER JOIN top5000 ON (top_albums.artist = top5000.artist AND top_albums.year ";
-      query += "= top5000.year) WHERE (top_albums.artist = ? AND top5000.artist = ?) ORDER BY top_albums.year, top_albums.position";
+// function songAndAlbumSearch() {
+//   inquirer
+//     .prompt({
+//       name: "artist",
+//       type: "input",
+//       message: "What artist would you like to search for?"
+//     })
+//     .then(function (answer) {
+//       var query = "SELECT top_albums.year, top_albums.album, top_albums.position, top5000.song, top5000.artist ";
+//       query += "FROM top_albums INNER JOIN top5000 ON (top_albums.artist = top5000.artist AND top_albums.year ";
+//       query += "= top5000.year) WHERE (top_albums.artist = ? AND top5000.artist = ?) ORDER BY top_albums.year, top_albums.position";
 
-      connection.query(query, [answer.artist, answer.artist], function (err, res) {
-        console.log(res.length + " matches found!");
-        for (var i = 0; i < res.length; i++) {
-          console.log(
-            i + 1 + ".) " +
-            "Year: " +
-            res[i].year +
-            " Album Position: " +
-            res[i].position +
-            " || Artist: " +
-            res[i].artist +
-            " || Song: " +
-            res[i].song +
-            " || Album: " +
-            res[i].album
-          );
-        }
+//       connection.query(query, [answer.artist, answer.artist], function (err, res) {
+//         console.log(res.length + " matches found!");
+//         for (var i = 0; i < res.length; i++) {
+//           console.log(
+//             i + 1 + ".) " +
+//             "Year: " +
+//             res[i].year +
+//             " Album Position: " +
+//             res[i].position +
+//             " || Artist: " +
+//             res[i].artist +
+//             " || Song: " +
+//             res[i].song +
+//             " || Album: " +
+//             res[i].album
+//           );
+//         }
 
-        runSearch();
-      });
-    });
-}
+//         runSearch();
+//       });
+//     });
+// }

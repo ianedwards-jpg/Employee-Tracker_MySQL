@@ -9,6 +9,7 @@ CREATE TABLE departmentData (
   PRIMARY KEY (id)
 );
 
+
 CREATE TABLE roleData (
   id INT NOT NULL AUTO_INCREMENT,
   title VARCHAR(30) NOT NULL,
@@ -22,7 +23,8 @@ CREATE TABLE employeeData (
   first_Name VARCHAR(30) NOT NULL,
   last_Name VARCHAR(30) NOT NULL,
   role_id INT NOT NULL,
-  manager_id INT NULL,
+  manager_id INT NOT NULL,
+ department_id INT NOT NULL,
   PRIMARY KEY (id)
 );
 
