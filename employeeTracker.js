@@ -145,7 +145,6 @@ function addEmp() {
     .then(function (answer) {
       switch (answer.action) {
         case "Intern":
-          roleNum = 1; 
           employeeView();
           break;
 
@@ -166,7 +165,7 @@ function createIntern() {
     {
       first_Name: answer.firstName,
       last_Name: answer.lastName,
-      role_id: roleNum,
+      role_id: 1,
       manager_id: ,
       department_id: 
     },
