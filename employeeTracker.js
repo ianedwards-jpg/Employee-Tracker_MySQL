@@ -1,6 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-var cTable= require("console.table");
+var cTable = require("console.table");
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -57,19 +57,15 @@ function runSearch() {
           break;
 
         case "Remove Employee":
-         remEmp();
+          remEmp();
           break;
 
         case "Update Employee Manager":
-          songAndAlbumSearch();
+          updateEmpMan();
           break;
 
         case "Update Employee Role":
-          songAndAlbumSearch();
-          break;
-
-        case "View All Roles":
-          songAndAlbumSearch();
+          updateEmpMan();
           break;
       }
     });
@@ -80,10 +76,10 @@ function employeeView() {
   var query = "SELECT * FROM employeeprofiles_db.employeeData;";
   connection.query(query, function (err, res) {
     //console.table(res);
-    console.table("\n",res);
+    console.table("\n", res);
     runSearch();
   });
- 
+
 }
 
 //
@@ -91,28 +87,28 @@ function viewEmpbyDept() {
   var deptQuery = "SELECT * FROM employeeprofiles_db.departmentData;";
   connection.query(deptQuery, function (err, res) {
     //console.table(res);
-    const choices = res.map(d=> d.dept_Name)
+    const choices = res.map(d => d.dept_Name)
     inquirer
-    .prompt([
-      {
-        type: 'list',
-        name: 'selectDepartment',
-        message: 'Select Department',
-        choices
-      },
-    ])
+      .prompt([
+        {
+          type: 'list',
+          name: 'selectDepartment',
+          message: 'Select Department',
+          choices
+        },
+      ])
       .then(function (answer) {
         var query = "SELECT * FROM employeeprofiles_db.employeeData WHERE department_id = ?";
-        connection.query(query, [choices.indexOf(answer.selectDepartment) + 1] , function (err, res) {
+        connection.query(query, [choices.indexOf(answer.selectDepartment) + 1], function (err, res) {
           console.table(res)
           runSearch();
         });
       });
   });
- 
+
 }
 
-function rangeSearch() {
+function addEmp() {
   inquirer
     .prompt([
       {
@@ -121,19 +117,9 @@ function rangeSearch() {
         message: 'Enter employees first name.',
       },
       {
-        name: 'name',
+        name: 'lastName',
         type: 'input',
         message: 'Enter employees last name.',
-      },
-      {
-        name: 'id',
-        type: 'input',
-        message: 'Enter your Employee ID.',
-      },
-      {
-        name: 'email',
-        type: 'input',
-        message: 'Enter your email.'
       },
       {
         name: "role",
@@ -144,27 +130,92 @@ function rangeSearch() {
           "Engineer",
           "Manager",
         ]
-      }
+      },
+      // {
+      //   name: 'id',
+      //   type: 'input',
+      //   message: 'Enter your Employee ID.',
+      // },
+      // {
+      //   name: 'email',
+      //   type: 'input',
+      //   message: 'Enter your email.'
+      // }
     ])
     .then(function (answer) {
-      var query = "SELECT position,song,artist,year FROM top5000 WHERE position BETWEEN ? AND ?";
-      connection.query(query, [answer.start, answer.end], function (err, res) {
-        for (var i = 0; i < res.length; i++) {
-          console.log(
-            "Position: " +
-            res[i].position +
-            " || Song: " +
-            res[i].song +
-            " || Artist: " +
-            res[i].artist +
-            " || Year: " +
-            res[i].year
-          );
-        }
-        runSearch();
-      });
+      switch (answer.action) {
+        case "Intern":
+          roleNum = 1; 
+          employeeView();
+          break;
+
+        case "Engineer":
+          createEngineer();
+          break;
+
+        case "Manager":
+          createManager();
+          break;
+      }
     });
 }
+function createIntern() {
+  console.log("Inserting a new product...\n");
+  var query = connection.query(
+    "INSERT INTO employeeData SET ?",
+    {
+      first_Name: answer.firstName,
+      last_Name: answer.lastName,
+      role_id: roleNum,
+      manager_id: ,
+      department_id: 
+    },
+    function (err, res) {
+      if (err) throw err;
+      console.log(res.affectedRows + " product inserted!\n");
+      // Call updateProduct AFTER the INSERT completes
+      runSearch();
+    }
+  )
+};
+
+function createEngineer() {
+  console.log("Inserting a new product...\n");
+  var query = connection.query(
+    "INSERT INTO products (first_Name, last_Name, role_id, manager_id, department_id, quantity)",
+    {
+      flavor: "Rocky Road",
+      price: 3.0,
+      quantity: 50
+    },
+    function (err, res) {
+      if (err) throw err;
+      console.log(res.affectedRows + " product inserted!\n");
+      // Call updateProduct AFTER the INSERT completes
+      runSearch();
+    }
+  )
+};
+
+function createManager() {
+  console.log("Inserting a new product...\n");
+  var query = connection.query(
+    "INSERT INTO products (first_Name, last_Name, role_id, manager_id, department_id, quantity)",
+    {
+      flavor: "Rocky Road",
+      price: 3.0,
+      quantity: 50
+    },
+    function (err, res) {
+      if (err) throw err;
+      console.log(res.affectedRows + " product inserted!\n");
+      // Call updateProduct AFTER the INSERT completes
+      runSearch();
+    }
+  )
+};
+
+
 
 // function songSearch() {
 //   inquirer

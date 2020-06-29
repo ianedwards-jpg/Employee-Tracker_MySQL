@@ -24,7 +24,7 @@ CREATE TABLE employeeData (
   last_Name VARCHAR(30) NOT NULL,
   role_id INT NOT NULL,
   manager_id INT NOT NULL,
- department_id INT NOT NULL,
+  department_id INT NOT NULL,
   PRIMARY KEY (id)
 );
 
