@@ -142,78 +142,136 @@ function addEmp() {
       //   message: 'Enter your email.'
       // }
     ])
-    .then (answers =>  {
+    .then(answers => {
       console.info('Basic Data:', answers);
       switch (answers.role) {
         case "Intern":
-          createIntern();
+          createIntern(answers);
           break;
 
         case "Engineer":
-          createEngineer();
+          createEngineer(answers);
           break;
 
         case "Manager":
-          createManager();
+          createManager(answers);
           break;
       }
     });
 }
-function createIntern() {
-  console.log("Inserting a new product...\n");
-  var query = connection.query(
-    "INSERT INTO employeeData SET ?",
-    {
-      first_Name: answer.firstName,
-      last_Name: answer.lastName,
-      role_id: 1,
-      manager_id: ,
-      department_id: 
-    },
-    function (err, res) {
-      if (err) throw err;
-      console.log(res.affectedRows + " product inserted!\n");
-      // Call updateProduct AFTER the INSERT completes
-      runSearch();
-    }
-  )
-};
+function createIntern(answers) {
+  var deptQuery = "SELECT * FROM employeeprofiles_db.departmentData;";
+  connection.query(deptQuery, function (err, res) {
+    //console.table(res);
+    const choices = res.map(d => d.dept_Name)
+    inquirer
+      .prompt([
+        {
+          type: 'list',
+          name: 'selectDepartment',
+          message: 'Select Department',
+          choices
+        },
+      ])
+      .then(function (answer) {
+
+
+        console.log("Inserting  new employee...\n");
+        var query = connection.query(
+          "INSERT INTO employeeData SET ?",
+          {
+            first_Name: answers.firstName,
+            last_Name: answers.lastName,
+            role_id: 1,
+            manager_id: 3,
+            department_id: answers.selectDepartment
+          },
+          function (err, res) {
+            if (err) throw err;
+            console.log(res.affectedRows + " product inserted!\n");
+            // Call updateProduct AFTER the INSERT completes
+            runSearch();
+          });
+        console.log(query.sql);
+      });
+  });
+}
 
 function createEngineer() {
-  console.log("Inserting a new product...\n");
-  var query = connection.query(
-    "INSERT INTO products (first_Name, last_Name, role_id, manager_id, department_id, quantity)",
-    {
-      flavor: "Rocky Road",
-      price: 3.0,
-      quantity: 50
-    },
-    function (err, res) {
-      if (err) throw err;
-      console.log(res.affectedRows + " product inserted!\n");
-      // Call updateProduct AFTER the INSERT completes
-      runSearch();
-    }
-  )
-};
+  var deptQuery = "SELECT * FROM employeeprofiles_db.departmentData;";
+  connection.query(deptQuery, function (err, res) {
+    //console.table(res);
+    const choices = res.map(d => d.dept_Name)
+    inquirer
+      .prompt([
+        {
+          type: 'list',
+          name: 'selectDepartment',
+          message: 'Select Department',
+          choices
+        },
+      ])
+      .then(function (answer) {
+
+
+        console.log("Inserting  new employee...\n");
+        var query = connection.query(
+          "INSERT INTO employeeData SET ?",
+          {
+            first_Name: answers.firstName,
+            last_Name: answers.lastName,
+            role_id: 2,
+            manager_id: 3,
+            department_id: answers.selectDepartment
+          },
+          function (err, res) {
+            if (err) throw err;
+            console.log(res.affectedRows + " product inserted!\n");
+            // Call updateProduct AFTER the INSERT completes
+            runSearch();
+          });
+        console.log(query.sql);
+      });
+  });
+}
 
 function createManager() {
-  console.log("Inserting a new product...\n");
-  var query = connection.query(
-    "INSERT INTO products (first_Name, last_Name, role_id, manager_id, department_id, quantity)",
-    {
-      flavor: "Rocky Road",
-      price: 3.0,
-      quantity: 50
-    },
-    function (err, res) {
-      if (err) throw err;
-      console.log(res.affectedRows + " product inserted!\n");
-      // Call updateProduct AFTER the INSERT completes
-      runSearch();
-    }
-  )
-};
+  var deptQuery = "SELECT * FROM employeeprofiles_db.departmentData;";
+  connection.query(deptQuery, function (err, res) {
+    //console.table(res);
+    const choices = res.map(d => d.dept_Name)
+    inquirer
+      .prompt([
+        {
+          type: 'list',
+          name: 'selectDepartment',
+          message: 'Select Department',
+          choices
+        },
+      ])
+      .then(function (answer) {
+
+
+        console.log("Inserting  new employee...\n");
+        var query = connection.query(
+          "INSERT INTO employeeData SET ?",
+          {
+            first_Name: answers.firstName,
+            last_Name: answers.lastName,
+            role_id: 3,
+            manager_id: 3,
+            department_id: answer.selectDepartment
+          },
+          function (err, res) {
+            if (err) throw err;
+            console.log(res.affectedRows + " product inserted!\n");
+            // Call updateProduct AFTER the INSERT completes
+            runSearch();
+          });
+        console.log(query.sql);
+      });
+  });
+}
 
 
 
