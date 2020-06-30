@@ -1,6 +1,7 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var cTable = require("console.table");
+const { isNullOrUndefined } = require("util");
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -57,7 +58,7 @@ function runSearch() {
           break;
 
         case "Remove Employee":
-          remEmp();
+          deleteEmp();
           break;
 
         case "Update Employee Manager":
@@ -250,7 +251,15 @@ function createManager() {
         },
       ])
       .then(function (answer) {
-
+        if (answer.selectDepartment === 'Action League Now') {
+          deptNum = 1;
+        }
+        else if (answer.selectDepartment === 'Team Avatar') {
+          deptNum = 2;
+        }
+        else if (answer.selectDepartment === 'The Fab Five') {
+          deptNum = 3;
+        }
 
         console.log("Inserting  new employee...\n");
         var query = connection.query(
@@ -260,7 +269,7 @@ function createManager() {
             last_Name: answers.lastName,
             role_id: 3,
             manager_id: 3,
-            department_id: answer.selectDepartment
+            department_id: deptNum
           },
           function (err, res) {
             if (err) throw err;
@@ -272,65 +281,41 @@ function createManager() {
       });
   });
 }
-
-
-
-// function songSearch() {
-//   inquirer
-//     .prompt({
-//       name: "song",
-//       type: "input",
-//       message: "What song would you like to look for?"
-//     })
-//     .then(function (answer) {
-//       console.log(answer.song);
-//       connection.query("SELECT * FROM top5000 WHERE ?", { song: answer.song }, function (err, res) {
-//         console.log(
-//           "Position: " +
-//           res[0].position +
-//           " || Song: " +
-//           res[0].song +
-//           " || Artist: " +
-//           res[0].artist +
-//           " || Year: " +
-//           res[0].year
-//         );
-//         runSearch();
-//       });
-//     });
-// }
-
-// function songAndAlbumSearch() {
-//   inquirer
-//     .prompt({
-//       name: "artist",
-//       type: "input",
-//       message: "What artist would you like to search for?"
-//     })
-//     .then(function (answer) {
-//       var query = "SELECT top_albums.year, top_albums.album, top_albums.position, top5000.song, top5000.artist ";
-//       query += "FROM top_albums INNER JOIN top5000 ON (top_albums.artist = top5000.artist AND top_albums.year ";
-//       query += "= top5000.year) WHERE (top_albums.artist = ? AND top5000.artist = ?) ORDER BY top_albums.year, top_albums.position";
-
-//       connection.query(query, [answer.artist, answer.artist], function (err, res) {
-//         console.log(res.length + " matches found!");
-//         for (var i = 0; i < res.length; i++) {
-//           console.log(
-//             i + 1 + ".) " +
-//             "Year: " +
-//             res[i].year +
-//             " Album Position: " +
-//             res[i].position +
-//             " || Artist: " +
-//             res[i].artist +
-//             " || Song: " +
-//             res[i].song +
-//             " || Album: " +
-//             res[i].album
-//           );
-//         }
-
-//         runSearch();
-//       });
-//     });
-// }
+function deleteEmp() {
+  var query = "SELECT * FROM employeeprofiles_db.employeeData;";
+  connection.query(query, function (err, res) {
+    //console.table(res);
+    console.table("\n", res);
+    inquirer
+      .prompt({
+        name: "deleteNum",
+        type: "input",
+        message: "Enter the ID number of the employee you wish to terminate."
+      })
+      .then(function (answer) {
+        if (answer.deleteNum === undefined || answer.deleteNum === null) {
+          console.log("Returning to Main Menu");
+          runSearch(); 
+        }
+        else {
+        console.log("Terminating Employee Number: " + answer.deleteNum);
+        //runSearch();
+        }
+      })
+      .then(function (answer) {
+       console.log("Deleting employee...\n");
+        connection.query(
+          "DELETE FROM employeeData WHERE ?",
+          {
+            employeeData: answer.deleteNum
+          },
+          function (err, res) {
+            if (err) throw err;
+            console.log(res.affectedRows + " products deleted!\n");
+            // Call runSearch AFTER the DELETE completes
+            runSearch();
+          }
+        );
+      });
+    }); 
+  }
