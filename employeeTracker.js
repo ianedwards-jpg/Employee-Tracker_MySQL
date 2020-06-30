@@ -142,10 +142,11 @@ function addEmp() {
       //   message: 'Enter your email.'
       // }
     ])
-    .then(function (answer) {
-      switch (answer.action) {
+    .then (answers =>  {
+      console.info('Basic Data:', answers);
+      switch (answers.role) {
         case "Intern":
-          employeeView();
+          createIntern();
           break;
 
         case "Engineer":
