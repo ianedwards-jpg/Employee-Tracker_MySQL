@@ -198,7 +198,7 @@ function createIntern(answers) {
   });
 }
 
-function createEngineer() {
+function createEngineer(answers) {
   var deptQuery = "SELECT * FROM employeeprofiles_db.departmentData;";
   connection.query(deptQuery, function (err, res) {
     //console.table(res);
@@ -214,6 +214,15 @@ function createEngineer() {
       ])
       .then(function (answer) {
 
+        if (answer.selectDepartment === 'Action League Now') {
+          deptNum = 1;
+        }
+        else if (answer.selectDepartment === 'Team Avatar') {
+          deptNum = 2;
+        }
+        else if (answer.selectDepartment === 'The Fab Five') {
+          deptNum = 3;
+        }
 
         console.log("Inserting  new employee...\n");
         var query = connection.query(
@@ -223,7 +232,7 @@ function createEngineer() {
             last_Name: answers.lastName,
             role_id: 2,
             manager_id: 3,
-            department_id: answers.selectDepartment
+            department_id: deptNum
           },
           function (err, res) {
             if (err) throw err;
@@ -300,14 +309,12 @@ function deleteEmp() {
         else {
         console.log("Terminating Employee Number: " + answer.deleteNum);
         //runSearch();
-        }
-      })
-      .then(function (answer) {
-       console.log("Deleting employee...\n");
+        console.log("Deleting employee...\n");
         connection.query(
           "DELETE FROM employeeData WHERE ?",
           {
-            employeeData: answer.deleteNum
+
+            id : answer.deleteNum
           },
           function (err, res) {
             if (err) throw err;
@@ -316,6 +323,7 @@ function deleteEmp() {
             runSearch();
           }
         );
-      });
+        }
+      })  
     }); 
   }
